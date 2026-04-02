@@ -36,5 +36,14 @@ public class ContaBancaria {
     public String getTipoConta() { return tipoConta; }
     public double getSaldo() { return saldo; }
     public String getChavePix() { return chavePix; }
+    public String getAll() {
+        return "{CPF: " + cpf +
+                ", Titular: " + titular +
+                ", Agência: " + agencia +
+                ", Conta: " + conta +
+                ", Tipo de Conta: " + tipoConta +
+                ", Saldo: " + saldo +
+                ", Pix: " + chavePix + "}";
+    }
 
 }

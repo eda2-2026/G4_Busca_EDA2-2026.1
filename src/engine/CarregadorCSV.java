@@ -10,14 +10,14 @@ import java.util.List;
 public class CarregadorCSV {
 
     // O método é estático para que você possa chamá-lo sem precisar "instanciar" o carregador
-    public static List<ContaBancaria> carregarDados(String "data/contas_bancarias.csv") {
+    public static List<ContaBancaria> carregarDados(String caminhoArquivo) {
 
         // Criação inicial de 100.000 posições no array - Não é limitado a 100.000, pode ocorrer 1M, 10M etc.
         List<ContaBancaria> bancoDeDados = new ArrayList<>(100000);
 
         // O 'try-with-resources' (dentro dos parênteses) garante que o arquivo será
         // fechado automaticamente no final, mesmo se der erro, evitando vazamento de memória.
-        try (BufferedReader br = new BufferedReader(new FileReader("data/contas_bancarias.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
 
             String linha;
 
