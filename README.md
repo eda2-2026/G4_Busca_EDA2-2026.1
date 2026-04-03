@@ -26,6 +26,41 @@ Conforme detalhado no documento *Esboço de Arquitetura e Escopo* (`docs/`), o d
 ### Responsabilidade Compartilhada
 * Implementação do código da interface gráfica no projeto e integração do motor de busca com a biblioteca visual importada.
 
+## 💻 Como Executar
+
+O projeto é dividido em duas etapas fundamentais: a geração da massa de dados e a execução do motor de processamento.
+
+### 🐍 1. Gerando a Massa de Dados (Python-Opcional)
+Antes de rodar a aplicação em Java, é necessário gerar o banco de dados simulado (`.csv`).
+
+**Pré-requisitos:** Python 3 instalado.
+
+No terminal, a partir da raiz do projeto, siga os passos:
+
+1. Acesse o diretório de scripts:
+   `cd scripts`
+2. Crie um ambiente virtual para isolar as dependências:
+   `python3 -m venv venv`
+3. Ative o ambiente virtual:
+   * **Mac/Linux:** `source venv/bin/activate`
+   * **Windows:** `venv\Scripts\activate`
+4. Instale as bibliotecas necessárias:
+   `pip install -r requirements.txt`
+5. Execute o gerador de dados:
+   `python gerador_dados.py`
+
+*O script criará automaticamente a pasta `data/` na raiz do projeto e salvará o arquivo `contas_bancarias.csv` perfeitamente ordenado.*
+
+### ☕ 2. Executando o Motor de Busca (Java) - EM DESENVOLVIMENTO
+Com o arquivo de dados devidamente gerado e posicionado em `data/contas_bancarias.csv`, o motor está pronto para uso.
+
+**Pré-requisitos:** JDK 11 ou superior.
+
+1. Abra o projeto na sua IDE de preferência (IntelliJ IDEA, Eclipse, VS Code).
+2. Certifique-se de que a pasta `src/` está marcada como o diretório de fontes (Sources Root).
+3. Navegue até o arquivo `src/Main.java`.
+4. Execute a classe `Main`. O sistema carregará a massa de dados para a memória (Heap) instantaneamente e inicializará a interface/terminal para as buscas.
+
 ## Equipe de Desenvolvimento
 
 | <img src="docs/assets/fotos/Davi-UnB.png" width="120px;" alt="Davi Freitas"/><br />**Davi Freitas** | <img src="docs/assets/fotos/Mateus0xC.png" width="120px;" alt="Mateus Barreto"/><br />**Mateus Barreto** |
