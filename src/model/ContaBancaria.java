@@ -18,10 +18,10 @@ public class ContaBancaria {
     Cada posição representa um atributo, ContaBancaria lê.
 */
     public ContaBancaria(String[] dadosDoCsv) {
-        this.cpf = dadosDoCsv[0];
-        this.titular = dadosDoCsv[1];
-        this.agencia = dadosDoCsv[2];
-        this.conta = dadosDoCsv[3];
+        this.agencia = dadosDoCsv[0];
+        this.conta = dadosDoCsv[1];
+        this.cpf = dadosDoCsv[2];
+        this.titular = dadosDoCsv[3];
         this.tipoConta = dadosDoCsv[4];
         this.saldo = Double.parseDouble(dadosDoCsv[5]); // Converte String para número decimal
         this.chavePix = dadosDoCsv[6];
