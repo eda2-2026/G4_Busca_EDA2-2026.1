@@ -28,30 +28,7 @@ Conforme detalhado no documento *Esboço de Arquitetura e Escopo* (`docs/`), o d
 
 ## Equipe de Desenvolvimento
 
-<div style="display: flex; gap: 20px; flex-wrap: wrap;">
-
-<div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; width: 250px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); background: var(--md-code-bg-color);">
-    <div style="width: 120px; height: 120px; background-color: #ddd; border-radius: 30%; margin: 0 auto 15px; overflow: hidden;">
-         <img src="docs/assets/fotos/Davi-UnB.png" alt="Foto de Davi" style="width: 100%; height: 100%; object-fit: cover;">
-    </div>
-    <h3 style="margin: 0 0 5px; font-size: 1.2em;">Davi Freitas</h3>
-    <p style="margin: 0 0 15px; font-size: 0.9em; font-weight: 500;">Matrícula: 241011018</p>
-    <div style="display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.9em;">
-        <img src="https://github.com/Davi-UnB.png" alt="GitHub Avatar" style="width: 16px; height: 16px; border-radius: 50%; display: block;">
-        <a href="https://github.com/Davi-UnB" target="_blank" style="text-decoration: none; opacity: 0.8; line-height: 16px;">@Davi-UnB</a>
-    </div>
-</div>
-
-<div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; width: 250px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); background: var(--md-code-bg-color);">
-    <div style="width: 120px; height: 120px; background-color: #ddd; border-radius: 30%; margin: 0 auto 15px; overflow: hidden;">
-         <img src="docs/assets/fotos/Mateus0xC.png" alt="Foto de Mateus" style="width: 100%; height: 100%; object-fit: cover;">
-    </div>
-    <h3 style="margin: 0 0 5px; font-size: 1.2em;">Mateus Barreto</h3>
-    <p style="margin: 0 0 15px; font-size: 0.9em; font-weight: 500;">Matrícula: 241011466</p>
-    <div style="display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.9em;">
-        <img src="https://github.com/Mateus0xC.png" alt="GitHub Avatar" style="width: 16px; height: 16px; border-radius: 50%; display: block;">
-        <a href="https://github.com/Mateus0xC" target="_blank" style="text-decoration: none; opacity: 0.8; line-height: 16px;">@Mateus0xC</a>
-    </div>
-</div>
-
-</div>
+| <img src="docs/assets/fotos/Davi-UnB.png" width="120px;" alt="Davi Freitas"/><br />**Davi Freitas** | <img src="docs/assets/fotos/Mateus0xC.png" width="120px;" alt="Mateus Barreto"/><br />**Mateus Barreto** |
+| :---: | :---: |
+| Matrícula: **241011018** | Matrícula: **241011466** |
+| <img src="https://github.com/Davi-UnB.png" width="16px;"/> [`@Davi-UnB`](https://github.com/Davi-UnB) | <img src="https://github.com/Mateus0xC.png" width="16px;"/> [`@Mateus0xC`](https://github.com/Mateus0xC) |
