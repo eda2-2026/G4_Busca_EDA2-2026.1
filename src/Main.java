@@ -1,6 +1,7 @@
 import engine.CarregadorCSV;
 import model.ContaBancaria;
 import java.util.List;
+import engine.BuscaSequencialNome;
 
 public class Main {
     public static void main(String[] args) {
@@ -33,6 +34,13 @@ public class Main {
             int ultimoIndice = bancoDeDados.size() - 1;
             System.out.println("Última conta [" + ultimoIndice + "]: " + bancoDeDados.get(ultimoIndice).getAll());
             System.out.println("---------------------------------\n");
+
+
+            // Exemplo de uso do método buscarNome
+            List<ContaBancaria> nomesBusca = BuscaSequencialNome.buscarNome("Renan",bancoDeDados);
+            for(int i = 0; i < nomesBusca.size(); i++){
+                System.out.println(nomesBusca.get(i).getAll());
+            }
 
         } else {
             System.out.println("Falha: O banco de dados retornou vazio. Verifique o caminho do arquivo.");
