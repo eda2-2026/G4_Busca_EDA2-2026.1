@@ -12,7 +12,7 @@ def gerar_massa_bancaria(quantidade=100000): #Quantidade padrão definida: 100.0
     print(f"[*] Gerando {quantidade} registros bancários. Isso pode levar alguns segundos...")
 
     for _ in range(quantidade):
-        agencia = f"{random.randint(1000, 4051)}"
+        agencia = f"{random.randint(1000, 5051)}"
         conta = f"{random.randint(10000, 99999)}-{random.randint(0, 9)}"
         cpf = fake.cpf()
 

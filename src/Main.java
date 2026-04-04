@@ -1,50 +1,79 @@
+import engine.BuscaBinariaConta;
+import engine.BuscaSequencialNome;
 import engine.CarregadorCSV;
 import engine.TabelaHashAgencias;
 import model.ContaBancaria;
+
 import java.util.List;
-import engine.BuscaSequencialNome;
 
 public class Main {
     public static void main(String[] args) {
 
-        System.out.println("Iniciando o sistema bancário...");
+        System.out.println("Iniciando o sistema bancário de alta performance...\n");
 
-        // Caminho relativo para o arquivo de dados
         String caminhoArquivo = "data/contas_bancarias.csv";
 
-        // Inicia o cronômetro
-        long tempoInicio = System.currentTimeMillis();
+        // 1. Inicia o Motor da Tabela Hash
+        TabelaHashAgencias motorHash = new TabelaHashAgencias();
 
-        // Chama o motor de carregamento que você construiu
-        List<ContaBancaria> bancoDeDados = CarregadorCSV.carregarDados("data/contas_bancarias.csv", new TabelaHashAgencias());
+        // 2. Carregamento e Indexação Simultânea
+        long tempoInicioLoad = System.currentTimeMillis();
+        List<ContaBancaria> bancoDeDados = CarregadorCSV.carregarDados(caminhoArquivo, motorHash);
+        long tempoTotalLoad = System.currentTimeMillis() - tempoInicioLoad;
 
-        // Para o cronômetro
-        long tempoFim = System.currentTimeMillis();
-        long tempoTotal = tempoFim - tempoInicio;
-
-        // Teste de Sanidade: Verifica se a lista não está vazia e exibe os resultados
+        // Teste de Sanidade e Relatório Base
         if (bancoDeDados != null && !bancoDeDados.isEmpty()) {
-            System.out.println("\n--- RELATÓRIO DE CARREGAMENTO ---");
-            System.out.println("Tempo de carregamento: " + tempoTotal + " milissegundos.");
-            System.out.println("Total de registros na memória: " + bancoDeDados.size());
-
-            // Pega o primeiro elemento (índice 0)
-            System.out.println("\nPrimeira conta [0]: " + bancoDeDados.get(0).getAll());
-
-            // Pega o último elemento (índice tamanho - 1)
-            int ultimoIndice = bancoDeDados.size() - 1;
-            System.out.println("Última conta [" + ultimoIndice + "]: " + bancoDeDados.get(ultimoIndice).getAll());
-            System.out.println("---------------------------------\n");
+            System.out.println("\n==================================================");
+            System.out.println("             RELATÓRIO DE CARREGAMENTO            ");
+            System.out.println("==================================================");
+            System.out.println("Tempo de processamento: " + tempoTotalLoad + " ms.");
+            System.out.println("Total de registros na RAM: " + bancoDeDados.size());
+            System.out.println("Primeira conta [0]: " + bancoDeDados.get(0).getAll());
+            System.out.println("Última conta [" + (bancoDeDados.size() - 1) + "]: " + bancoDeDados.get(bancoDeDados.size() - 1).getAll());
+            System.out.println("==================================================\n");
 
 
-            // Exemplo de uso do método buscarNome
-            List<ContaBancaria> nomesBusca = BuscaSequencialNome.buscarNome("Renan",bancoDeDados);
-            for(int i = 0; i < nomesBusca.size(); i++){
-                System.out.println(nomesBusca.get(i).getAll());
+            // 3. Teste de Mesa: Busca Sequencial O(N)
+            System.out.println(">>> TESTE 1: Busca Sequencial por Nome (Varredura Completa O(N))");
+            long tempoInicioSeq = System.nanoTime(); // Usando nanoTime para maior precisão
+            List<ContaBancaria> nomesBusca = BuscaSequencialNome.buscarNome("Renan", bancoDeDados);
+            long tempoTotalSeq = System.nanoTime() - tempoInicioSeq;
+
+            System.out.println("Resultados encontrados: " + nomesBusca.size());
+            if(!nomesBusca.isEmpty()){
+                System.out.println("Exemplo: " + nomesBusca.get(0).getAll());
+            }
+            System.out.println("Tempo de execução: " + (tempoTotalSeq / 1_000_000.0) + " ms.\n");
+
+
+            // 4. Teste de Mesa: O Motor Híbrido O(1) + O(log M)
+            System.out.println(">>> TESTE 2: Busca Binária Delimitada por Hash O(log M)");
+
+            // Pegamos dados de uma conta real que existe no final do seu CSV para testar o pior cenário
+            String agenciaAlvo = bancoDeDados.get(bancoDeDados.size() - 1).getAgencia();
+            String contaAlvo = bancoDeDados.get(bancoDeDados.size() - 1).getConta();
+
+            long tempoInicioBin = System.nanoTime();
+            ContaBancaria contaEncontrada = BuscaBinariaConta.obterConta(agenciaAlvo, contaAlvo, motorHash, bancoDeDados);
+            long tempoTotalBin = System.nanoTime() - tempoInicioBin;
+
+            if (contaEncontrada != null) {
+                System.out.println("Sucesso! Conta localizada: " + contaEncontrada.getAll());
+            } else {
+                System.out.println("Falha: A conta " + contaAlvo + " da agência " + agenciaAlvo + " não foi encontrada.");
+            }
+            System.out.println("Tempo de execução: " + (tempoTotalBin / 1_000_000.0) + " ms.\n");
+
+
+            // 5. Teste de Mesa: Cliente Inexistente (Validação de Failsafe)
+            System.out.println(">>> TESTE 3: Busca de cliente fantasma");
+            ContaBancaria contaFantasma = BuscaBinariaConta.obterConta("9999", "00000-0", motorHash, bancoDeDados);
+            if (contaFantasma == null) {
+                System.out.println("Comportamento esperado: Retornou null corretamente e não quebrou o sistema.");
             }
 
         } else {
-            System.out.println("Falha: O banco de dados retornou vazio. Verifique o caminho do arquivo.");
+            System.err.println("Falha Crítica: O banco de dados retornou vazio. Verifique o caminho do arquivo CSV.");
         }
     }
 }

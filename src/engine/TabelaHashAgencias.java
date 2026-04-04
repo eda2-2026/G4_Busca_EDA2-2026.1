@@ -6,7 +6,7 @@ import model.IndiceAgencia;
 public class TabelaHashAgencias {
 
     IndiceAgencia[] hashVetor = new IndiceAgencia[7919]; // Criação do Vetor. 7919 é primo e caberá ao uso
-                                                        // Temos por definição dos dados da agência 1000 até 4999
+                                                        // Temos por definição dos dados da agência 1000 até 5051
                                                         // Motivo de escolha: O banco do Brasil por exemplo,
                                                         // Possui aproximadamente 4.000 agências
 
@@ -69,7 +69,8 @@ public class TabelaHashAgencias {
 
 
     /**
-     * Calcula o índice da Tabela Hash usando o método Polynomial Rolling Hash.
+     * Para que nossa função hash não seja apenas uma operação mod utilizaremos
+     * O cálculo do índice da Tabela Hash usando o método Polynomial Rolling Hash.
      * Padrão de mercado para excelente dispersão de chaves alfanuméricas curtas.
      */
     private int calcularHash(String agencia) {

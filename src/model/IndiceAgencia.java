@@ -14,11 +14,13 @@ public class IndiceAgencia {
     public void setAgencia(String ag){
         agencia = ag;
     }
-    public String getAgencia() { return agencia; }
     public void atualizarSuperior(int i){
         limiteSuperior = i;
     }
     public void atualizarInferior(int i){
         limiteInferior = i;
     }
+    public String getAgencia() { return agencia; }
+    public int getlimiteSuperior() { return limiteSuperior; }
+    public int getlimiteInferior() { return limiteInferior; }
 }
