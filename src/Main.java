@@ -1,4 +1,5 @@
 import engine.CarregadorCSV;
+import engine.TabelaHashAgencias;
 import model.ContaBancaria;
 import java.util.List;
 import engine.BuscaSequencialNome;
@@ -15,7 +16,7 @@ public class Main {
         long tempoInicio = System.currentTimeMillis();
 
         // Chama o motor de carregamento que você construiu
-        List<ContaBancaria> bancoDeDados = CarregadorCSV.carregarDados("data/contas_bancarias.csv");
+        List<ContaBancaria> bancoDeDados = CarregadorCSV.carregarDados("data/contas_bancarias.csv", new TabelaHashAgencias());
 
         // Para o cronômetro
         long tempoFim = System.currentTimeMillis();

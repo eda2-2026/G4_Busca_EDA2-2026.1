@@ -1,5 +1,4 @@
 package engine;
-
 import model.ContaBancaria;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,13 +9,11 @@ import java.util.List;
 public class CarregadorCSV {
 
     // O método é estático para que você possa chamá-lo sem precisar "instanciar" o carregador
-    public static List<ContaBancaria> carregarDados(String caminhoArquivo) {
+    public static List<ContaBancaria> carregarDados(String caminhoArquivo, TabelaHashAgencias hashTable) {
 
         // Criação inicial de 100.000 posições no array - Não é limitado a 100.000, pode ocorrer 1M, 10M etc.
         List<ContaBancaria> bancoDeDados = new ArrayList<>(100000);
 
-        // O 'try-with-resources' (dentro dos parênteses) garante que o arquivo será
-        // fechado automaticamente no final, mesmo se der erro, evitando vazamento de memória.
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
 
             String linha;
@@ -25,6 +22,7 @@ public class CarregadorCSV {
             br.readLine();
 
             // Lê o arquivo linha por linha até chegar no final (null)
+            int i = 0;
             while ((linha = br.readLine()) != null) {
 
                 String[] dados = linha.split(";");
@@ -41,6 +39,8 @@ public class CarregadorCSV {
                 // o endereço do objeto para um local seguro. A variável temporária morre,
                 // mas a "casa" continua viva e acessível através da lista bancoDeDados!
                 bancoDeDados.add(novaConta);
+                hashTable.registrarOcorrencia(novaConta.getAgencia(),i);
+                i++;
             }
 
             System.out.println("Sucesso: " + bancoDeDados.size() + " contas carregadas na memória!");
