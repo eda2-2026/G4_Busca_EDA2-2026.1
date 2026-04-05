@@ -6,6 +6,8 @@ import model.ContaBancaria;
 import view.Formulario;
 
 import java.util.List;
+import javax.swing.*;
+import java.awt.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -32,19 +34,17 @@ public class Main {
         // =====================================================================
         Formulario tela = new Formulario("Sistema Central de Atendimento");
 
-        // Painel de Informações do Servidor
         tela.adicionarTexto("STATUS DO SERVIDOR: ONLINE");
         tela.adicionarTexto("Tempo de inicialização do Índice Hash: " + tempoTotalLoad + " ms.");
         tela.adicionarTexto("Total de clientes indexados na RAM: " + bancoDeDados.size());
-        tela.adicionarTexto(" "); // Quebra de linha visual
+        tela.adicionarTexto(" ");
 
-        // Campos de Entrada
         tela.adicionarInput("Nome do Cliente");
         tela.adicionarInput("Agência (Ex: 1000)");
         tela.adicionarInput("Conta (Ex: 12345-6)");
 
         // =====================================================================
-        // 3. AÇÃO 1: Botão da Busca Lenta (Varredura de Nomes com Tabela)
+        // 3. AÇÃO 1: Busca por Nome O(N) - Tabela Horizontal
         // =====================================================================
         tela.adicionarAcao("Busca por Nome O(N)", () -> {
             String nome = tela.resposta("Nome do Cliente");
@@ -54,22 +54,26 @@ public class Main {
                 return;
             }
 
-            tela.exibirAlerta(""); // Limpa alertas anteriores
+            tela.exibirAlerta("");
 
-            long t0 = System.nanoTime();
-            List<ContaBancaria> resultados = BuscaSequencialNome.buscarNome(nome, bancoDeDados);
-            long t1 = System.nanoTime();
-            String tempoExecucao = String.valueOf((t1 - t0) / 1_000_000.0);
+            try {
+                long t0 = System.nanoTime();
+                List<ContaBancaria> resultados = BuscaSequencialNome.buscarNome(nome, bancoDeDados);
+                long t1 = System.nanoTime();
+                String tempoExecucao = String.valueOf((t1 - t0) / 1_000_000.0);
 
-            if (resultados.isEmpty()) {
-                Formulario.mostrarMensagem("Nenhum cliente com o nome '" + nome + "' foi localizado.", "Busca Sequencial");
-            } else {
-                exibirTabelaResultados(resultados, tempoExecucao);
+                if (resultados.isEmpty()) {
+                    Formulario.mostrarMensagem("Nenhum cliente com o nome '" + nome + "' foi localizado.", "Busca Sequencial");
+                } else {
+                    exibirTabelaResultados(resultados, tempoExecucao);
+                }
+            } catch (Exception e) {
+                tela.exibirAlerta("Erro na busca por nome: " + e.getMessage());
             }
         });
 
         // =====================================================================
-        // 4. AÇÃO 2: Botão da Busca de Alta Performance (Índice Hash + Binária)
+        // 4. AÇÃO 2: Busca Indexada O(1) + O(log M) - Ficha Vertical com Try-Catch
         // =====================================================================
         tela.adicionarAcao("Busca de Conta O(1) + O(log M)", () -> {
             String agencia = tela.resposta("Agência (Ex: 1000)");
@@ -80,47 +84,37 @@ public class Main {
                 return;
             }
 
-            tela.exibirAlerta(""); // Limpa alertas anteriores
+            tela.exibirAlerta("");
 
             try {
                 long t0 = System.nanoTime();
-                // Tenta realizar a busca indexada
+                // Realiza a busca utilizando o motor hash e busca binária interna
                 ContaBancaria resultado = BuscaBinariaConta.obterConta(agencia, conta, motorHash, bancoDeDados);
                 long t1 = System.nanoTime();
-
-                String relatorio = "Tempo de execução: " + ((t1 - t0) / 1_000_000.0) + " ms\n\n";
+                String tempoExecucao = String.valueOf((t1 - t0) / 1_000_000.0);
 
                 if (resultado != null) {
-                    relatorio += "DADOS DO CLIENTE:\n" + resultado.getAll();
+                    // Exibe a ficha técnica vertical do cliente
+                    exibirDetalhesConta(resultado, tempoExecucao);
                 } else {
-                    relatorio += "Nenhum cliente encontrado com a agência " + agencia + " e conta " + conta + ".";
+                    Formulario.mostrarMensagem("Nenhum cliente encontrado com a agência " + agencia + " e conta " + conta + ".", "Resultado: Busca Indexada");
                 }
 
-                Formulario.mostrarMensagem(relatorio, "Resultado: Busca Indexada");
-
             } catch (Exception e) {
-                // Exibe o erro na parte inferior do formulário
-                tela.exibirAlerta("Erro na busca: " + e.getMessage());
-
-                // Opcional: Imprime o stacktrace no console para depuração técnica
+                // Feedback de erro diretamente na interface via formulário
+                tela.exibirAlerta("Erro na busca indexada: " + e.getMessage());
                 e.printStackTrace();
             }
         });
 
-        // =====================================================================
-        // 5. RENDERIZAÇÃO
-        // =====================================================================
         tela.mostrar();
     }
 
     /**
-     * Renderiza uma Tabela Visual (JTable) com todos os resultados encontrados.
+     * Renderiza uma Tabela Horizontal (Listagem) para múltiplos resultados.
      */
     private static void exibirTabelaResultados(List<ContaBancaria> resultados, String tempoExecucao) {
-        // 1. Definimos as colunas individuais
         String[] colunas = {"Nome do Cliente", "Agência", "Conta"};
-
-        // 2. A Matriz agora tem várias colunas (exemplo: 3 colunas)
         Object[][] matrizDados = new Object[resultados.size()][3];
 
         for (int i = 0; i < resultados.size(); i++) {
@@ -130,29 +124,51 @@ public class Main {
             matrizDados[i][2] = cliente.getConta();
         }
 
-        // 3. Criamos a Tabela Visual
-        javax.swing.JTable tabela = new javax.swing.JTable(matrizDados, colunas);
+        JTable tabela = new JTable(matrizDados, colunas);
         tabela.setRowHeight(25);
         tabela.setEnabled(false);
+        tabela.getColumnModel().getColumn(0).setPreferredWidth(300);
+        tabela.getColumnModel().getColumn(1).setPreferredWidth(150);
+        tabela.getColumnModel().getColumn(2).setPreferredWidth(150);
 
-        // ====================================================================
-        // NOVO: CONFIGURAÇÃO DE LARGURA DAS COLUNAS
-        // A janela tem 600 pixels no total. Vamos fatiar esse espaço:
-        // ====================================================================
-        tabela.getColumnModel().getColumn(0).setPreferredWidth(300); // Nome ganha espaço de sobra
-        tabela.getColumnModel().getColumn(1).setPreferredWidth(150); // Agência fica compacta
-        tabela.getColumnModel().getColumn(2).setPreferredWidth(150); // Conta fica compacta
+        JScrollPane painelRolagem = new JScrollPane(tabela);
+        painelRolagem.setPreferredSize(new Dimension(600, 300));
 
-        // 4. Colocamos a tabela dentro de um painel com barra de rolagem (Scroll)
-        javax.swing.JScrollPane painelRolagem = new javax.swing.JScrollPane(tabela);
-        painelRolagem.setPreferredSize(new java.awt.Dimension(600, 300)); // Tamanho da janela
+        JPanel painelFinal = new JPanel(new BorderLayout());
+        painelFinal.add(new JLabel("Tempo de processamento: " + tempoExecucao + " ms."), BorderLayout.NORTH);
+        painelFinal.add(painelRolagem, BorderLayout.CENTER);
 
-        // 5. Adicionamos o tempo de busca no cabeçalho
-        javax.swing.JPanel painelFinal = new javax.swing.JPanel(new java.awt.BorderLayout());
-        painelFinal.add(new javax.swing.JLabel("Tempo de processamento: " + tempoExecucao + " ms."), java.awt.BorderLayout.NORTH);
-        painelFinal.add(painelRolagem, java.awt.BorderLayout.CENTER);
+        JOptionPane.showMessageDialog(null, painelFinal, "Resultados da Busca (" + resultados.size() + ")", JOptionPane.PLAIN_MESSAGE);
+    }
 
-        // 6. Chamamos o popup nativo do Java enviando o painel inteiro
-        javax.swing.JOptionPane.showMessageDialog(null, painelFinal, "Foram encontrados " + resultados.size() + " resultados", javax.swing.JOptionPane.PLAIN_MESSAGE);
+    /**
+     * Renderiza uma Tabela Vertical (Ficha Individual) para um único cliente.
+     */
+    private static void exibirDetalhesConta(ContaBancaria cliente, String tempoExecucao) {
+        String[] colunas = {"Atributo", "Informação Cadastral"};
+        Object[][] matrizDados = {
+                {"Nome do Titular", cliente.getTitular()},
+                {"CPF do Titular", cliente.getCpf()},
+                {"Agência Bancária", cliente.getAgencia()},
+                {"Número da Conta", cliente.getConta()},
+                {"Tipo de Conta", cliente.getTipoConta()},
+                {"Saldo", cliente.getSaldo()},
+                {"Chave PIX", cliente.getChavePix()}
+        };
+
+        JTable tabela = new JTable(matrizDados, colunas);
+        tabela.setRowHeight(30);
+        tabela.setEnabled(false);
+        tabela.getColumnModel().getColumn(0).setPreferredWidth(150);
+        tabela.getColumnModel().getColumn(1).setPreferredWidth(450);
+
+        JScrollPane painelRolagem = new JScrollPane(tabela);
+        painelRolagem.setPreferredSize(new Dimension(600, 250));
+
+        JPanel painelFinal = new JPanel(new BorderLayout());
+        painelFinal.add(new JLabel("Busca Indexada realizada em: " + tempoExecucao + " ms."), BorderLayout.NORTH);
+        painelFinal.add(painelRolagem, BorderLayout.CENTER);
+
+        JOptionPane.showMessageDialog(null, painelFinal, "Ficha Completa do Cliente", JOptionPane.INFORMATION_MESSAGE);
     }
 }
