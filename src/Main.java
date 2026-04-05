@@ -3,8 +3,10 @@ import engine.BuscaBinariaCpf;
 import engine.BuscaSequencialNome;
 import engine.CarregadorCSV;
 import engine.TabelaHashAgencias;
+import engine.TabelaHashPix;
 import model.ContaBancaria;
 import model.IndiceCpf;
+import model.IndicePix;
 import view.Formulario;
 
 import java.util.List;
@@ -16,9 +18,10 @@ public class Main {
     public static void main(String[] args) {
         String caminhoArquivo = "data/contas_bancarias.csv";
         TabelaHashAgencias motorHash = new TabelaHashAgencias();
+        TabelaHashPix motorHashPix = new TabelaHashPix();
 
         long t0 = System.currentTimeMillis();
-        List<ContaBancaria> bancoDeDados = CarregadorCSV.carregarDados(caminhoArquivo, motorHash);
+        List<ContaBancaria> bancoDeDados = CarregadorCSV.carregarDados(caminhoArquivo, motorHash, motorHashPix);
         List<IndiceCpf> indicesCpf = CarregadorCSV.carregarIndicesCpf("data/indices_cpf.csv", bancoDeDados);
         long tempoLoad = System.currentTimeMillis() - t0;
 
@@ -27,10 +30,10 @@ public class Main {
             return;
         }
 
-        new Main().menuPrincipal(bancoDeDados, motorHash, indicesCpf, tempoLoad);
+        new Main().menuPrincipal(bancoDeDados, motorHash, motorHashPix, indicesCpf, tempoLoad);
     }
 
-    public void menuPrincipal(List<ContaBancaria> db, TabelaHashAgencias hash, List<IndiceCpf> indicesCpf, long tempoLoad) {
+    public void menuPrincipal(List<ContaBancaria> db, TabelaHashAgencias hash, TabelaHashPix hashPix, List<IndiceCpf> indicesCpf, long tempoLoad) {
         Formulario f = new Formulario("Sistema Central de Atendimento");
 
         f.adicionarTexto("• Clientes Indexados: " + db.size());
@@ -50,6 +53,11 @@ public class Main {
         f.adicionarAcao("Busca por CPF", () -> {
             f.ocultar();
             menuCpf(f, indicesCpf);
+        });
+
+        f.adicionarAcao("Busca por PIX", () -> {
+            f.ocultar();
+            menuPix(f, hashPix);
         });
 
         f.mostrar();
@@ -139,6 +147,37 @@ public class Main {
             } else {
                 // Abre o navegador visual de contas para o mesmo CPF
                 exibirNavegadorContas(resultadoCpf.getContas(), tempo);
+            }
+        });
+        f.mostrar();
+    }
+
+    // =====================================================================
+    // MENU PIX (BUSCA HASH O(1))
+    // =====================================================================
+
+    private void menuPix(Formulario anterior, TabelaHashPix hashPix) {
+        Formulario f = new Formulario("Busca por PIX");
+        f.adicionarTexto("Digite a chave PIX (CPF, Email, Telefone, ou Aleatória):");
+        f.adicionarInput("Chave PIX", true);
+
+        f.adicionarAcao("Voltar", () -> { f.ocultar(); anterior.mostrar(); });
+
+        f.adicionarAcao("Pesquisar O(1)", () -> {
+            if (!f.valido()) return;
+            f.exibirAlerta("");
+
+            long t0 = System.nanoTime();
+            String pixBusca = f.resposta("Chave PIX");
+            IndicePix resultadoPix = hashPix.obterOcorrencia(pixBusca);
+
+            long t1 = System.nanoTime();
+            String tempo = String.valueOf((t1 - t0) / 1_000_000.0);
+
+            if (resultadoPix == null || resultadoPix.getContas().isEmpty()) {
+                f.exibirAlerta("Nenhuma conta vinculada a esta Chave PIX.");
+            } else {
+                exibirNavegadorContas(resultadoPix.getContas(), tempo);
             }
         });
         f.mostrar();

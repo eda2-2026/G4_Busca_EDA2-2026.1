@@ -9,7 +9,7 @@ import java.util.List;
 public class CarregadorCSV {
 
     // O método é estático para que você possa chamá-lo sem precisar "instanciar" o carregador
-    public static List<ContaBancaria> carregarDados(String caminhoArquivo, TabelaHashAgencias hashTable) {
+    public static List<ContaBancaria> carregarDados(String caminhoArquivo, TabelaHashAgencias hashTable, TabelaHashPix hashPix) {
 
         // Criação inicial de 100.000 posições no array - Não é limitado a 100.000, pode ocorrer 1M, 10M etc.
         List<ContaBancaria> bancoDeDados = new ArrayList<>(100000);
@@ -40,6 +40,7 @@ public class CarregadorCSV {
                 // mas a "casa" continua viva e acessível através da lista bancoDeDados!
                 bancoDeDados.add(novaConta);
                 hashTable.registrarOcorrencia(novaConta.getAgencia(),i);
+                hashPix.registrarOcorrencia(novaConta);
                 i++;
             }
 

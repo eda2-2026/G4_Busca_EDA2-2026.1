@@ -20,7 +20,7 @@ Conforme detalhado no documento *Esboço de Arquitetura e Escopo* (`docs/`), o d
 
 ### Mateus
 * Implementação do algoritmo de busca de conta por **CPF**.
-* Implementação do algoritmo de busca de conta por **Chave Pix**. (A fazer)
+* Implementação do algoritmo de busca de conta por **Chave Pix**.
 * Implementação da interface gráfica base.
 
 ### Responsabilidade Compartilhada
