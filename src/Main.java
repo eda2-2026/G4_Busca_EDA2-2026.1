@@ -107,20 +107,31 @@ public class Main {
      * Renderiza uma Tabela Visual (JTable) com todos os resultados encontrados.
      */
     private static void exibirTabelaResultados(List<ContaBancaria> resultados, String tempoExecucao) {
-        // 1. Definimos as colunas da tabela
-        String[] colunas = {"Registro Completo no Banco de Dados"};
+        // 1. Definimos as colunas individuais
+        String[] colunas = {"Nome do Cliente", "Agência", "Conta"};
 
-        // 2. Preparamos a matriz de dados (Linhas x Colunas)
-        Object[][] matrizDados = new Object[resultados.size()][1];
+        // 2. A Matriz agora tem várias colunas (exemplo: 3 colunas)
+        Object[][] matrizDados = new Object[resultados.size()][3];
 
         for (int i = 0; i < resultados.size(); i++) {
-            matrizDados[i][0] = resultados.get(i).getAll();
+            ContaBancaria cliente = resultados.get(i);
+            matrizDados[i][0] = cliente.getTitular();
+            matrizDados[i][1] = cliente.getAgencia();
+            matrizDados[i][2] = cliente.getConta();
         }
 
         // 3. Criamos a Tabela Visual
         javax.swing.JTable tabela = new javax.swing.JTable(matrizDados, colunas);
-        tabela.setRowHeight(25); // Dá um respiro entre as linhas
-        tabela.setEnabled(false); // Apenas leitura, bloqueia edição na tela
+        tabela.setRowHeight(25);
+        tabela.setEnabled(false);
+
+        // ====================================================================
+        // NOVO: CONFIGURAÇÃO DE LARGURA DAS COLUNAS
+        // A janela tem 600 pixels no total. Vamos fatiar esse espaço:
+        // ====================================================================
+        tabela.getColumnModel().getColumn(0).setPreferredWidth(300); // Nome ganha espaço de sobra
+        tabela.getColumnModel().getColumn(1).setPreferredWidth(150); // Agência fica compacta
+        tabela.getColumnModel().getColumn(2).setPreferredWidth(150); // Conta fica compacta
 
         // 4. Colocamos a tabela dentro de um painel com barra de rolagem (Scroll)
         javax.swing.JScrollPane painelRolagem = new javax.swing.JScrollPane(tabela);
