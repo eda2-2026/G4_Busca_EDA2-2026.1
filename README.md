@@ -20,11 +20,11 @@ Conforme detalhado no documento *Esboço de Arquitetura e Escopo* (`docs/`), o d
 
 ### Mateus
 * Implementação do algoritmo de busca de conta por **CPF**.
-* Implementação do algoritmo de busca de conta por **Chave Pix**.
-* Desenvolvimento e disponibilização da biblioteca visual prévia.
+* Implementação do algoritmo de busca de conta por **Chave Pix**. (A fazer)
+* Implementação da interface gráfica base.
 
 ### Responsabilidade Compartilhada
-* Implementação do código da interface gráfica no projeto e integração do motor de busca com a biblioteca visual importada.
+* Uso da interface gráfica no projeto e integração do motor de busca com a biblioteca visual importada.
 
 ## 💻 Como Executar
 
@@ -54,7 +54,7 @@ No terminal, a partir da raiz do projeto, siga os passos:
 ### ☕ 2. Executando o Motor de Busca (Java) - EM DESENVOLVIMENTO
 Com o arquivo de dados devidamente gerado e posicionado em `data/contas_bancarias.csv`, o motor está pronto para uso.
 
-**Pré-requisitos:** JDK 11 ou superior.
+**Pré-requisitos:** JDK 25 ou superior.
 
 1. Abra o projeto na sua IDE de preferência (IntelliJ IDEA, Eclipse, VS Code).
 2. Certifique-se de que a pasta `src/` está marcada como o diretório de fontes (Sources Root).
