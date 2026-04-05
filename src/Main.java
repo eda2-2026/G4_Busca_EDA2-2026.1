@@ -3,77 +3,135 @@ import engine.BuscaSequencialNome;
 import engine.CarregadorCSV;
 import engine.TabelaHashAgencias;
 import model.ContaBancaria;
+import view.Formulario;
 
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
 
-        System.out.println("Iniciando o sistema bancário de alta performance...\n");
+        // =====================================================================
+        // 1. CARREGAMENTO DOS DADOS (Backend)
+        // =====================================================================
+        System.out.println("Iniciando o sistema bancário... Aguarde o carregamento na memória.");
 
         String caminhoArquivo = "data/contas_bancarias.csv";
-
-        // 1. Inicia o Motor da Tabela Hash
         TabelaHashAgencias motorHash = new TabelaHashAgencias();
 
-        // 2. Carregamento e Indexação Simultânea
         long tempoInicioLoad = System.currentTimeMillis();
         List<ContaBancaria> bancoDeDados = CarregadorCSV.carregarDados(caminhoArquivo, motorHash);
         long tempoTotalLoad = System.currentTimeMillis() - tempoInicioLoad;
 
-        // Teste de Sanidade e Relatório Base
-        if (bancoDeDados != null && !bancoDeDados.isEmpty()) {
-            System.out.println("\n==================================================");
-            System.out.println("             RELATÓRIO DE CARREGAMENTO            ");
-            System.out.println("==================================================");
-            System.out.println("Tempo de processamento: " + tempoTotalLoad + " ms.");
-            System.out.println("Total de registros na RAM: " + bancoDeDados.size());
-            System.out.println("Primeira conta [0]: " + bancoDeDados.get(0).getAll());
-            System.out.println("Última conta [" + (bancoDeDados.size() - 1) + "]: " + bancoDeDados.get(bancoDeDados.size() - 1).getAll());
-            System.out.println("==================================================\n");
-
-
-            // 3. Teste de Mesa: Busca Sequencial O(N)
-            System.out.println(">>> TESTE 1: Busca Sequencial por Nome (Varredura Completa O(N))");
-            long tempoInicioSeq = System.nanoTime(); // Usando nanoTime para maior precisão
-            List<ContaBancaria> nomesBusca = BuscaSequencialNome.buscarNome("Renan", bancoDeDados);
-            long tempoTotalSeq = System.nanoTime() - tempoInicioSeq;
-
-            System.out.println("Resultados encontrados: " + nomesBusca.size());
-            if(!nomesBusca.isEmpty()){
-                System.out.println("Exemplo: " + nomesBusca.get(0).getAll());
-            }
-            System.out.println("Tempo de execução: " + (tempoTotalSeq / 1_000_000.0) + " ms.\n");
-
-
-            // 4. Teste de Mesa: O Motor Híbrido O(1) + O(log M)
-            System.out.println(">>> TESTE 2: Busca Binária Delimitada por Hash O(log M)");
-
-            // Pegamos dados de uma conta real que existe no final do seu CSV para testar o pior cenário
-            String agenciaAlvo = bancoDeDados.get(bancoDeDados.size() - 1).getAgencia();
-            String contaAlvo = bancoDeDados.get(bancoDeDados.size() - 1).getConta();
-
-            long tempoInicioBin = System.nanoTime();
-            ContaBancaria contaEncontrada = BuscaBinariaConta.obterConta(agenciaAlvo, contaAlvo, motorHash, bancoDeDados);
-            long tempoTotalBin = System.nanoTime() - tempoInicioBin;
-
-            if (contaEncontrada != null) {
-                System.out.println("Sucesso! Conta localizada: " + contaEncontrada.getAll());
-            } else {
-                System.out.println("Falha: A conta " + contaAlvo + " da agência " + agenciaAlvo + " não foi encontrada.");
-            }
-            System.out.println("Tempo de execução: " + (tempoTotalBin / 1_000_000.0) + " ms.\n");
-
-
-            // 5. Teste de Mesa: Cliente Inexistente (Validação de Failsafe)
-            System.out.println(">>> TESTE 3: Busca de cliente fantasma");
-            ContaBancaria contaFantasma = BuscaBinariaConta.obterConta("9999", "00000-0", motorHash, bancoDeDados);
-            if (contaFantasma == null) {
-                System.out.println("Comportamento esperado: Retornou null corretamente e não quebrou o sistema.");
-            }
-
-        } else {
-            System.err.println("Falha Crítica: O banco de dados retornou vazio. Verifique o caminho do arquivo CSV.");
+        if (bancoDeDados == null || bancoDeDados.isEmpty()) {
+            Formulario.mostrarMensagem("Erro Crítico: Falha ao ler o arquivo CSV. O sistema será encerrado.", "Falha no Banco de Dados");
+            return;
         }
+
+        // =====================================================================
+        // 2. MONTAGEM DA INTERFACE GRÁFICA (Frontend)
+        // =====================================================================
+        Formulario tela = new Formulario("Sistema Central de Atendimento");
+
+        // Painel de Informações do Servidor
+        tela.adicionarTexto("STATUS DO SERVIDOR: ONLINE");
+        tela.adicionarTexto("Tempo de inicialização do Índice Hash: " + tempoTotalLoad + " ms.");
+        tela.adicionarTexto("Total de clientes indexados na RAM: " + bancoDeDados.size());
+        tela.adicionarTexto(" "); // Quebra de linha visual
+
+        // Campos de Entrada
+        tela.adicionarInput("Nome do Cliente");
+        tela.adicionarInput("Agência (Ex: 1000)");
+        tela.adicionarInput("Conta (Ex: 12345-6)");
+
+        // =====================================================================
+        // 3. AÇÃO 1: Botão da Busca Lenta (Varredura de Nomes com Tabela)
+        // =====================================================================
+        tela.adicionarAcao("Busca por Nome O(N)", () -> {
+            String nome = tela.resposta("Nome do Cliente");
+
+            if (nome.isBlank()) {
+                tela.exibirAlerta("Erro: O campo Nome não pode estar vazio para esta busca.");
+                return;
+            }
+
+            tela.exibirAlerta(""); // Limpa alertas anteriores
+
+            long t0 = System.nanoTime();
+            List<ContaBancaria> resultados = BuscaSequencialNome.buscarNome(nome, bancoDeDados);
+            long t1 = System.nanoTime();
+            String tempoExecucao = String.valueOf((t1 - t0) / 1_000_000.0);
+
+            if (resultados.isEmpty()) {
+                Formulario.mostrarMensagem("Nenhum cliente com o nome '" + nome + "' foi localizado.", "Busca Sequencial");
+            } else {
+                exibirTabelaResultados(resultados, tempoExecucao);
+            }
+        });
+
+        // =====================================================================
+        // 4. AÇÃO 2: Botão da Busca de Alta Performance (Índice Hash + Binária)
+        // =====================================================================
+        tela.adicionarAcao("Busca de Conta O(1) + O(log M)", () -> {
+            String agencia = tela.resposta("Agência (Ex: 1000)");
+            String conta = tela.resposta("Conta (Ex: 12345-6)");
+
+            if (agencia.isBlank() || conta.isBlank()) {
+                tela.exibirAlerta("Erro: Para localizar uma conta, preencha a Agência e a Conta.");
+                return;
+            }
+
+            tela.exibirAlerta(""); // Limpa alertas anteriores
+
+            long t0 = System.nanoTime();
+            ContaBancaria resultado = BuscaBinariaConta.obterConta(agencia, conta, motorHash, bancoDeDados);
+            long t1 = System.nanoTime();
+
+            String relatorio = "Tempo de execução: " + ((t1 - t0) / 1_000_000.0) + " ms\n\n";
+
+            if (resultado != null) {
+                relatorio += "DADOS DO CLIENTE:\n" + resultado.getAll();
+            } else {
+                relatorio += "Nenhum cliente encontrado com a agência " + agencia + " e conta " + conta + ".";
+            }
+
+            Formulario.mostrarMensagem(relatorio, "Resultado: Busca Indexada");
+        });
+
+        // =====================================================================
+        // 5. RENDERIZAÇÃO
+        // =====================================================================
+        tela.mostrar();
+    }
+
+    /**
+     * Renderiza uma Tabela Visual (JTable) com todos os resultados encontrados.
+     */
+    private static void exibirTabelaResultados(List<ContaBancaria> resultados, String tempoExecucao) {
+        // 1. Definimos as colunas da tabela
+        String[] colunas = {"Registro Completo no Banco de Dados"};
+
+        // 2. Preparamos a matriz de dados (Linhas x Colunas)
+        Object[][] matrizDados = new Object[resultados.size()][1];
+
+        for (int i = 0; i < resultados.size(); i++) {
+            matrizDados[i][0] = resultados.get(i).getAll();
+        }
+
+        // 3. Criamos a Tabela Visual
+        javax.swing.JTable tabela = new javax.swing.JTable(matrizDados, colunas);
+        tabela.setRowHeight(25); // Dá um respiro entre as linhas
+        tabela.setEnabled(false); // Apenas leitura, bloqueia edição na tela
+
+        // 4. Colocamos a tabela dentro de um painel com barra de rolagem (Scroll)
+        javax.swing.JScrollPane painelRolagem = new javax.swing.JScrollPane(tabela);
+        painelRolagem.setPreferredSize(new java.awt.Dimension(600, 300)); // Tamanho da janela
+
+        // 5. Adicionamos o tempo de busca no cabeçalho
+        javax.swing.JPanel painelFinal = new javax.swing.JPanel(new java.awt.BorderLayout());
+        painelFinal.add(new javax.swing.JLabel("Tempo de processamento: " + tempoExecucao + " ms."), java.awt.BorderLayout.NORTH);
+        painelFinal.add(painelRolagem, java.awt.BorderLayout.CENTER);
+
+        // 6. Chamamos o popup nativo do Java enviando o painel inteiro
+        javax.swing.JOptionPane.showMessageDialog(null, painelFinal, "Foram encontrados " + resultados.size() + " resultados", javax.swing.JOptionPane.PLAIN_MESSAGE);
     }
 }
