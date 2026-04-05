@@ -66,4 +66,4 @@ Com o arquivo de dados devidamente gerado e posicionado em `data/contas_bancaria
 | <img src="docs/assets/fotos/Davi-UnB.png" width="120px;" alt="Davi Freitas"/><br />**Davi Freitas** | <img src="docs/assets/fotos/Mateus0xC.png" width="120px;" alt="Mateus Barreto"/><br />**Mateus Barreto** |
 | :---: | :---: |
 | Matrícula: **241011018** | Matrícula: **241011466** |
-| <img src="https://github.com/Davi-UnB.png" width="16px;"/> [`@Davi-UnB`](https://github.com/Davi-UnB) | <img src="https://github.com/Mateus0xC.png" width="16px;"/> [`@Mateus0xC`](https://github.com/Mateus0xC) |
+| <img src="https://github.com/Davi-UnB.png" width="16px;"/> [`@Davi-UnB`](https://github.com/Davi-UnB) | <img src="https://github.com/Mateus0xC.png" width="16px;"/> [`@Mateus0xC`](https://github.com/Mateus0xC) <img src="https://github.com/gecko1205.png" width="16px;"/> [`@gecko1205`](https://github.com/gecko1205) |
