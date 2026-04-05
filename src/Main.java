@@ -82,19 +82,29 @@ public class Main {
 
             tela.exibirAlerta(""); // Limpa alertas anteriores
 
-            long t0 = System.nanoTime();
-            ContaBancaria resultado = BuscaBinariaConta.obterConta(agencia, conta, motorHash, bancoDeDados);
-            long t1 = System.nanoTime();
+            try {
+                long t0 = System.nanoTime();
+                // Tenta realizar a busca indexada
+                ContaBancaria resultado = BuscaBinariaConta.obterConta(agencia, conta, motorHash, bancoDeDados);
+                long t1 = System.nanoTime();
 
-            String relatorio = "Tempo de execução: " + ((t1 - t0) / 1_000_000.0) + " ms\n\n";
+                String relatorio = "Tempo de execução: " + ((t1 - t0) / 1_000_000.0) + " ms\n\n";
 
-            if (resultado != null) {
-                relatorio += "DADOS DO CLIENTE:\n" + resultado.getAll();
-            } else {
-                relatorio += "Nenhum cliente encontrado com a agência " + agencia + " e conta " + conta + ".";
+                if (resultado != null) {
+                    relatorio += "DADOS DO CLIENTE:\n" + resultado.getAll();
+                } else {
+                    relatorio += "Nenhum cliente encontrado com a agência " + agencia + " e conta " + conta + ".";
+                }
+
+                Formulario.mostrarMensagem(relatorio, "Resultado: Busca Indexada");
+
+            } catch (Exception e) {
+                // Exibe o erro na parte inferior do formulário
+                tela.exibirAlerta("Erro na busca: " + e.getMessage());
+
+                // Opcional: Imprime o stacktrace no console para depuração técnica
+                e.printStackTrace();
             }
-
-            Formulario.mostrarMensagem(relatorio, "Resultado: Busca Indexada");
         });
 
         // =====================================================================
