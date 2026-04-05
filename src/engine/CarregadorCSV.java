@@ -51,4 +51,31 @@ public class CarregadorCSV {
 
         return bancoDeDados;
     }
+
+    public static List<model.IndiceCpf> carregarIndicesCpf(String caminhoArquivo, List<ContaBancaria> bancoDeDados) {
+        List<model.IndiceCpf> indicesCpf = new ArrayList<>();
+        // Assumindo que num mundo real teremos um CPF para quase todas as contas
+        // então a capacidade inicial pode ser um pouco menor que o banco cheio
+        try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
+            String linha;
+            br.readLine(); // ignora o cabeçalho (cpf;indices)
+
+            while ((linha = br.readLine()) != null) {
+                String[] dados = linha.split(";");
+                String cpf = dados[0];
+                String[] strIndices = dados[1].split(",");
+
+                model.IndiceCpf indice = new model.IndiceCpf(cpf);
+                for (String strIdx : strIndices) {
+                    int idx = Integer.parseInt(strIdx);
+                    indice.adicionarConta(bancoDeDados.get(idx));
+                }
+                indicesCpf.add(indice);
+            }
+            System.out.println("Sucesso: " + indicesCpf.size() + " CPFs indexados carregados na memória!");
+        } catch (IOException e) {
+            System.err.println("Aviso: índice de CPFs não encontrado. Execute o script Python. " + e.getMessage());
+        }
+        return indicesCpf;
+    }
 }
