@@ -188,6 +188,9 @@ public class Formulario {
     // -------------------------------------------------------------------------
 
     public void mostrar() {
+        if (frameInvisivel != null) {
+            frameInvisivel.setVisible(true);
+        }
         dialog.pack();
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
@@ -195,6 +198,9 @@ public class Formulario {
 
     public void ocultar() {
         dialog.setVisible(false);
+        if (frameInvisivel != null) {
+            frameInvisivel.setVisible(false);
+        }
     }
 
     public String resposta(String input) {
