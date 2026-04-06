@@ -83,6 +83,32 @@ def gerar_massa_bancaria(quantidade=100000): #Quantidade padrão definida: 100.0
         writer.writeheader()
         writer.writerows(contas_geradas)
 
+    print("[*] Gerando índice ordenado de CPFs...")
+    # Agrupa os índices das contas por CPF
+    mapa_cpfs = {}
+    for i, conta_obj in enumerate(contas_geradas):
+        cpf_atual = conta_obj['cpf']
+        if cpf_atual not in mapa_cpfs:
+            mapa_cpfs[cpf_atual] = []
+        mapa_cpfs[cpf_atual].append(str(i))
+
+    lista_indices_cpf = []
+    for cpf, indices in mapa_cpfs.items():
+        lista_indices_cpf.append({
+            'cpf': cpf,
+            'indices': ",".join(indices)
+        })
+
+    # Ordena o índice por CPF (ordem alfabética)
+    lista_indices_cpf.sort(key=lambda x: x['cpf'])
+
+    caminho_indice_cpf = os.path.join(diretorio_script, '..', 'data', 'indices_cpf.csv')
+    print(f"[*] Exportando índice de CPFs para o arquivo: {caminho_indice_cpf}")
+    with open(caminho_indice_cpf, mode='w', newline='', encoding='utf-8') as arquivo_cpf:
+        writer_cpf = csv.DictWriter(arquivo_cpf, fieldnames=['cpf', 'indices'], delimiter=';')
+        writer_cpf.writeheader()
+        writer_cpf.writerows(lista_indices_cpf)
+
     print(f"[+] Sucesso! {quantidade} registros ordenados e prontos para o Java.")
 
 
