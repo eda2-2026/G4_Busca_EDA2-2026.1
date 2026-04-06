@@ -51,7 +51,7 @@ No terminal, a partir da raiz do projeto, siga os passos:
 
 *O script criará automaticamente a pasta `data/` na raiz do projeto e salvará o arquivo `contas_bancarias.csv` perfeitamente ordenado.*
 
-### ☕ 2. Executando o Motor de Busca (Java) - EM DESENVOLVIMENTO
+### ☕ 2. Executando o Motor de Busca (Java)
 Com o arquivo de dados devidamente gerado e posicionado em `data/contas_bancarias.csv`, o motor está pronto para uso.
 
 **Pré-requisitos:** JDK 25 ou superior.
@@ -60,6 +60,16 @@ Com o arquivo de dados devidamente gerado e posicionado em `data/contas_bancaria
 2. Certifique-se de que a pasta `src/` está marcada como o diretório de fontes (Sources Root).
 3. Navegue até o arquivo `src/Main.java`.
 4. Execute a classe `Main`. O sistema carregará a massa de dados para a memória (Heap) instantaneamente e inicializará a interface/terminal para as buscas.
+
+## Demonstração Visual
+
+**▶️ Assista ao nosso vídeo explicativo no YouTube:**  
+[![Vídeo de Demonstração](https://img.youtube.com/vi/JGP9_5V64Mw/maxresdefault.jpg)](https://youtu.be/JGP9_5V64Mw)
+
+### Capturas de Tela do Sistema
+![Apresentação 1](docs/assets/capturas%20de%20tela/screenshot_1.png)
+![Apresentação 2](docs/assets/capturas%20de%20tela/screenshot_2.png)
+![Apresentação 3](docs/assets/capturas%20de%20tela/screenshot_3.png)
 
 ## Equipe de Desenvolvimento
 
