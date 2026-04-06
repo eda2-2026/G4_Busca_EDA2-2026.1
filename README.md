@@ -61,15 +61,13 @@ Com o arquivo de dados devidamente gerado e posicionado em `data/contas_bancaria
 3. Navegue até o arquivo `src/Main.java`.
 4. Execute a classe `Main`. O sistema carregará a massa de dados para a memória (Heap) instantaneamente e inicializará a interface/terminal para as buscas.
 
-## Demonstração Visual
+## 🎥 Demonstração Visual
 
-**▶️ Assista ao nosso vídeo explicativo no YouTube:**  
+**Assista ao nosso vídeo explicativo no YouTube:**  
 [![Vídeo de Demonstração](https://img.youtube.com/vi/JGP9_5V64Mw/maxresdefault.jpg)](https://youtu.be/JGP9_5V64Mw)
 
 ### Capturas de Tela do Sistema
-![Apresentação 1](docs/assets/capturas%20de%20tela/screenshot_1.png)
-![Apresentação 2](docs/assets/capturas%20de%20tela/screenshot_2.png)
-![Apresentação 3](docs/assets/capturas%20de%20tela/screenshot_3.png)
+<img src="docs/assets/capturas%20de%20tela/screenshot_1.png" width="300"/> <img src="docs/assets/capturas%20de%20tela/screenshot_2.png" width="300"/> <img src="docs/assets/capturas%20de%20tela/screenshot_3.png" width="300"/>
 
 ## Equipe de Desenvolvimento
 
